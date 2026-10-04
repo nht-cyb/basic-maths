@@ -6,6 +6,7 @@
 #include "percent.h"
 #include "stats.h"
 #include "matrix.h"
+#include "advanced_ops.h"
 
 static void print_fraction(const char *label, Fraction f) {
     printf("%s = %ld/%ld\n", label, f.num, f.den);
@@ -106,6 +107,31 @@ int main(void) {
     matrix_free(diff);
     matrix_free(product);
     matrix_free(bad);
+
+    printf("\n== Advanced multiplication ==\n");
+    ull p;
+    lattice_multiply(42, 35, &p, stdout);
+    partial_products_multiply(26, 45, &p, stdout);
+    russian_peasant_multiply(37, 42, &p, stdout);
+    duplication_multiply(14, 12, &p, stdout);
+
+    printf("\n== Advanced division ==\n");
+    ull q, r, low, high, estimate;
+    divide_repeated_subtraction(28, 5, &q, &r, stdout);
+    divide_partial_quotients(496, 4, &q, &r, stdout);
+    estimate_quotient(152, 6, &low, &high, &estimate, stdout);
+    quotient_and_remainder(27, 4, &q, &r, stdout);
+
+    printf("\n== Interpreting the remainder ==\n");
+    ull whole, num, den, answer;
+    remainder_as_fraction(16, 5, &whole, &num, &den);
+    printf("16 in of candy for 5 people: %llu %llu/%llu in each\n", whole, num, den);
+    quotient_round_up(30, 4, &answer);
+    printf("30 people, 4 per car: %llu cars\n", answer);
+    remainder_only(20, 3, &answer);
+    printf("$20 among 3 friends, sister gets the rest: $%llu\n", answer);
+    quotient_drop_remainder(50, 9, &answer);
+    printf("$50 for $9 meals: %llu meals\n", answer);
 
     return 0;
 }
