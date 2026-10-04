@@ -2,7 +2,7 @@
 
 Basic maths functions in C: whole-number arithmetic, fractions, consumer
 maths, geometry, percentages, statistics, matrices, numbers of any size,
-and the advanced multiplication and division methods from
+special numbers (prime, amicable, deficient, perfect), and the advanced multiplication and division methods from
 [basic-mathematics.com](https://www.basic-mathematics.com/pre-algebra-lessons.html).
 
 This is a git practice repo.
@@ -35,6 +35,7 @@ file with `-Iinclude`:
 | [`matrix.h`](include/matrix.h) | Matrix add, subtract, multiply |
 | [`bigint.h`](include/bigint.h) | Whole numbers of any size, and their means |
 | [`advanced_ops.h`](include/advanced_ops.h) | Lattice, Russian peasant, partial quotients, and more |
+| [`number_types.h`](include/number_types.h) | Prime, amicable, deficient and perfect numbers |
 
 Every source file is in [`src/`](src) with the same name, e.g. `src/geometry.c`.
 
@@ -253,6 +254,44 @@ russian_peasant_multiply(37, 42, &product, stdout);
 `divide_repeated_subtraction` takes one step per unit of the quotient, so it is
 very slow for huge quotients (e.g. 10¹⁸ ÷ 1). `estimate_quotient` returns `-1`
 when the quotient is within about 10% of the largest `unsigned long long`.
+
+## Special numbers — `number_types.h`
+
+These are based on the *proper divisors* of a number: every divisor except the
+number itself (for 12 that is 1, 2, 3, 4, 6). The kinds overlap: every prime is
+also deficient, and 284 is both amicable and deficient. `0` is none of them.
+The `is_` functions return `1` for yes and `0` for no.
+
+`special_numbers_below(n)` returns a 4-row `Matrix` listing every special number
+smaller than `n`, one kind per row in this order: prime, amicable, deficient,
+perfect (`ROW_PRIME`, `ROW_AMICABLE`, `ROW_DEFICIENT`, `ROW_PERFECT`). Rows are
+as long as the longest list and the shorter ones end in `0`s, so stop reading a
+row at the first `0`. Call `matrix_free()` when done.
+
+```c
+Matrix *special = special_numbers_below(10);
+matrix_print(special);
+/* |    2.00    3.00    5.00    7.00    0.00    0.00    0.00    0.00 |   prime
+   |    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00 |   amicable
+   |    1.00    2.00    3.00    4.00    5.00    7.00    8.00    9.00 |   deficient
+   |    6.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00 |   perfect */
+double first_perfect = matrix_get(special, ROW_PERFECT, 0);   /* 6 */
+matrix_free(special);
+```
+
+| Function | Example | Result |
+|---|---|---|
+| `sum_proper_divisors(n)` | 12 → 1 + 2 + 3 + 4 + 6 | `16` |
+| `is_prime(n)` | `is_prime(29)` | `1` (only 1 and 29 divide it) |
+| `is_amicable(n)` | `is_amicable(220)` | `1` (220 → 284 and 284 → 220) |
+| `is_deficient(n)` | `is_deficient(8)` | `1` (1 + 2 + 4 = 7 < 8) |
+| `is_perfect(n)` | `is_perfect(28)` | `1` (1 + 2 + 4 + 7 + 14 = 28) |
+| `special_numbers_below(n)` | `special_numbers_below(10)` | the matrix above |
+
+The `is_` functions test divisors up to √n, so they are quick for numbers up
+to about 10¹² and slow (minutes) near the top of `unsigned long long`.
+`special_numbers_below(n)` uses memory and time that grow with `n`; it works
+well into the millions.
 
 ## License
 

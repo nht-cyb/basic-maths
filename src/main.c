@@ -7,6 +7,7 @@
 #include "stats.h"
 #include "matrix.h"
 #include "advanced_ops.h"
+#include "number_types.h"
 
 static void print_fraction(const char *label, Fraction f) {
     printf("%s = %ld/%ld\n", label, f.num, f.den);
@@ -132,6 +133,20 @@ int main(void) {
     printf("$20 among 3 friends, sister gets the rest: $%llu\n", answer);
     quotient_drop_remainder(50, 9, &answer);
     printf("$50 for $9 meals: %llu meals\n", answer);
+
+    printf("\n== Special numbers ==\n");
+    unsigned long long samples[] = { 7, 12, 28, 220, 284, 945 };
+    for (size_t i = 0; i < sizeof samples / sizeof samples[0]; i++) {
+        unsigned long long x = samples[i];
+        printf("%4llu: divisors sum to %4llu  prime %d  amicable %d  "
+               "deficient %d  perfect %d\n",
+               x, sum_proper_divisors(x), is_prime(x), is_amicable(x),
+               is_deficient(x), is_perfect(x));
+    }
+    Matrix *special = special_numbers_below(30);
+    printf("Special numbers below 30 (rows: prime, amicable, deficient, perfect):\n");
+    matrix_print(special);
+    matrix_free(special);
 
     return 0;
 }
