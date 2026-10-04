@@ -1,8 +1,11 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 
-maths: src/main.c src/maths.c include/maths.h
-	$(CC) $(CFLAGS) -o $@ src/main.c src/maths.c
+SRCS = $(wildcard src/*.c)
+HDRS = $(wildcard include/*.h)
+
+maths: $(SRCS) $(HDRS)
+	$(CC) $(CFLAGS) -o $@ $(SRCS)
 
 clean:
 	rm -f maths
