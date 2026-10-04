@@ -5,6 +5,7 @@
 #include "geometry.h"
 #include "percent.h"
 #include "stats.h"
+#include "matrix.h"
 
 static void print_fraction(const char *label, Fraction f) {
     printf("%s = %ld/%ld\n", label, f.num, f.den);
@@ -76,6 +77,35 @@ int main(void) {
     printf("Mean   = %.2f\n", mean(data, n));
     printf("Median = %.2f\n", median(data, n));
     printf("Mode   = %.2f\n", mode(data, n));
+
+    printf("\n== Matrices ==\n");
+    Matrix *a = matrix_from_array(2, 3, (double[]){ 1, 2, 3,
+                                                    4, 5, 6 });
+    Matrix *b = matrix_from_array(2, 3, (double[]){ 6, 5, 4,
+                                                    3, 2, 1 });
+    Matrix *c = matrix_from_array(3, 2, (double[]){ 7,  8,
+                                                    9, 10,
+                                                   11, 12 });
+    printf("A (2x3):\n");     matrix_print(a);
+    printf("B (2x3):\n");     matrix_print(b);
+    printf("C (3x2):\n");     matrix_print(c);
+
+    Matrix *sum = matrix_add(a, b);
+    Matrix *diff = matrix_subtract(a, b);
+    Matrix *product = matrix_multiply(a, c);
+    Matrix *bad = matrix_multiply(a, b); /* 2x3 times 2x3 is not allowed */
+    printf("A + B:\n");       matrix_print(sum);
+    printf("A - B:\n");       matrix_print(diff);
+    printf("A x C (2x2):\n"); matrix_print(product);
+    printf("A x B:\n");       matrix_print(bad);
+
+    matrix_free(a);
+    matrix_free(b);
+    matrix_free(c);
+    matrix_free(sum);
+    matrix_free(diff);
+    matrix_free(product);
+    matrix_free(bad);
 
     return 0;
 }
